@@ -78,11 +78,23 @@ const Controls = () => {
 const Data = () => {
   const data = useHardwareState(MSGID.DATA)
   let distance_color
+  let distance_item
 
   if (data.distance_to_target > 200) {
     distance_color = Colors.GREEN1;
   } else {
     distance_color = Colors.RED1;
+  }
+
+  if (data.distance_to_target > 3000) {
+    distance_item = <></>
+  } else {
+    distance_item = <Statistic
+      accessor={state => state.data.distance_to_target}
+      label="Distance"
+      suffix="mm"
+      inGroupOf={2}
+      color={distance_color}/>
   }
 
   return (
@@ -93,15 +105,12 @@ const Data = () => {
 
       <Callout title="" style={{ textAlign: 'center'}}>
         <Statistics>
+          {distance_item}
           <Statistic
-            accessor={state => state.data.distance_to_target}
-            label="Distance"
-            suffix="mm"
-            color={distance_color}/>
-          <Statistic
-            accessor={state => state.data.velocity}
+            accessor={state => state.data.velocity.x + state.data.velocity.y}
             label="Velocity"
             suffix="mm/s"
+            precision={0}
             color={Colors.BLACK}/>
         </Statistics>
       </Callout>
@@ -135,6 +144,10 @@ const Odometry = () => {
     y: {
       name: 'y-Velocity',
       color: Colors.GREEN1,
+    },
+    abs: {
+      name: 'abs-Velocity',
+      color: Colors.VIOLET1,
     },
   })
 
@@ -181,13 +194,6 @@ const Odometry = () => {
                 inGroupOf={1}
                 precision={3}
                 color={Colors.GREEN1}/>
-              <Statistic
-                accessor={state => Math.sqrt(state.data.position.x**2 + state.data.position.y**2)}
-                label="Position"
-                suffix="m"
-                inGroupOf={1}
-                precision={3}
-                color={Colors.BLACK}/>
             </Statistics>
           </Box>
           <Box>
@@ -224,14 +230,7 @@ const Odometry = () => {
                 inGroupOf={1}
                 precision={0}
                 color={Colors.GREEN1}/>
-              <Statistic
-                accessor={state => Math.sqrt(state.data.velocity.x**2 + state.data.velocity.y**2)}
-                label="Velocity"
-                suffix="mm/s"
-                inGroupOf={1}
-                precision={0}
-                color={Colors.BLACK}/>
-            </Statistics>
+              </Statistics>
           </Box>
           <Box>
             <Legend
@@ -239,18 +238,25 @@ const Odometry = () => {
               justifyContent="end"/>
             <ChartContainer>
               <LineChart
-                dataSource={sensorDS}
-                accessor={state => state.data.velocity.x}
+                dataSource={dataDS}
+                accessor={state => state.velocity.x}
                 color={legendVelocity.x.color}
                 opacitySource={legendVelocity.x.opacity}
                 visibilitySource={legendVelocity.x.visible}
               />
               <LineChart
-                dataSource={sensorDS}
-                accessor={state => state.data.velocity.y}
+                dataSource={dataDS}
+                accessor={state => state.velocity.y}
                 color={legendVelocity.y.color}
                 opacitySource={legendVelocity.y.opacity}
                 visibilitySource={legendVelocity.y.visible}
+              />
+              <LineChart
+                dataSource={dataDS}
+                accessor={state =>state.velocity.x + state.velocity.y}
+                color={legendVelocity.abs.color}
+                opacitySource={legendVelocity.abs.opacity}
+                visibilitySource={legendVelocity.abs.visible}
               />
               <RealTimeDomain window={10_000}/>
               <TimeAxis label="Time (s)" />

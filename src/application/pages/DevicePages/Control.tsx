@@ -7,8 +7,9 @@ import { IconNames } from "@blueprintjs/icons";
 import {MESSAGEIDS} from "@electricui/protocol-binary-constants";
 import {MSGID} from "../../typedState";
 import {Dropdown} from "@electricui/components-desktop-blueprint";
-import {Imu, Robocar} from "../../types/state";
+import {Imu, Robocar, TofSpot} from "../../types/state";
 import * as path from "path";
+import {OperatingMode} from "../../types/request";
 
 const RobocarStatus = () => {
   let component;
@@ -69,6 +70,7 @@ const EmergencyStop = () => {
           state => {
             state.request.emergency_stop = 1
             state.request.controls.throttle = 0
+            state.request.mode = OperatingMode.MANUAL
           },
           true,
           cancellationToken,
@@ -84,6 +86,7 @@ const EmergencyStop = () => {
           state => {
             state.request.emergency_stop = 0
             state.request.controls.throttle = 0
+            state.request.mode = OperatingMode.MANUAL
           },
           true,
           cancellationToken,
@@ -133,9 +136,9 @@ const Controls = () => {
             }
             popoverProps={{ position: 'right', minimal: false }}
           >
-            <Dropdown.Option value={0} text="Slow" label="100 mm/s"/>
-            <Dropdown.Option value={1} text="Medium" label="500 mm/s"/>
-            <Dropdown.Option value={2} text="Full speed" label=">1 m/s"/>
+            <Dropdown.Option value={0} text="Slow" label="250 mm/s"/>
+            <Dropdown.Option value={1} text="Medium" label="1 m/s"/>
+            <Dropdown.Option value={2} text="Full speed" label="2 m/s"/>
           </Dropdown>
           <Dropdown
             fill
@@ -162,6 +165,7 @@ const Controls = () => {
 const State = () => {
   let imu_component;
   let robocar_state;
+  let tof_spot_component;
   const state = useHardwareState(MSGID.STATE)
 
   const writeState = useWriteState()
@@ -193,6 +197,47 @@ const State = () => {
     case Robocar.EMS:
       robocar_state = <Callout title="Safety" intent={Intent.DANGER}>
         EMS is triggered
+      </Callout>
+      break
+  }
+
+  switch (state.tof_spot) {
+    case TofSpot.VALID_DATA:
+      tof_spot_component = <></>
+     break
+    case TofSpot.VCSEL_SHORT:
+      tof_spot_component = <Callout title="ToF-Spot" intent={Intent.PRIMARY}>
+        VCSEL_SHORT
+      </Callout>
+      break
+    case TofSpot.LOW_SIGNAL:
+      tof_spot_component = <Callout title="ToF-Spot" intent={Intent.WARNING}>
+        LOW_SIGNAL
+      </Callout>
+      break
+    case TofSpot.LOW_SN:
+      tof_spot_component = <Callout title="ToF-Spot" intent={Intent.WARNING}>
+        LOW_SN
+      </Callout>
+      break
+    case TofSpot.TOO_MUCH_AMB:
+      tof_spot_component = <Callout title="ToF-Spot" intent={Intent.WARNING}>
+        TOO_MUCH_AMB
+      </Callout>
+      break
+    case TofSpot.WAF:
+      tof_spot_component = <Callout title="ToF-Spot" intent={Intent.DANGER}>
+        WAF
+      </Callout>
+      break
+    case TofSpot.CAL_ERROR:
+      tof_spot_component = <Callout title="ToF-Spot" intent={Intent.DANGER}>
+        CAL_ERROR
+      </Callout>
+      break
+    case TofSpot.CROSSTALK_ERROR:
+      tof_spot_component = <Callout title="ToF-Spot" intent={Intent.DANGER}>
+        CROSSTALK_ERROR
       </Callout>
       break
   }
@@ -248,7 +293,9 @@ const State = () => {
 
   return (
     <React.Fragment>
+      {robocar_state}
       {imu_component}
+      {tof_spot_component}
     </React.Fragment>
   )
 }

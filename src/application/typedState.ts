@@ -15,11 +15,6 @@ declare global {
   }
 }
 
-export type Board = {
-  mac: number[]
-  ip: number[]
-}
-
 export type RGB = {
   red: number;
   green: number;

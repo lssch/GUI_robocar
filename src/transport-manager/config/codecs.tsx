@@ -1,6 +1,6 @@
 import { Codec, Message } from '@electricui/core'
 
-import {Board, MSGID} from '../../application/typedState'
+import {MSGID} from '../../application/typedState'
 import {Controls, Request} from "../../application/types/request";
 import {Imu, Sensor, TofCamera, TofSpot, Vfs} from "../../application/types/sensor";
 import {Data} from "../../application/types/data";
@@ -31,39 +31,6 @@ export class GuiCodec extends Codec<Gui> {
   }
 }
 
-export class BoardCodec extends Codec<Board> {
-  filter(message: Message): boolean {
-    return message.messageID === MSGID.BOARD
-  }
-
-  encode(payload: Board): Buffer {
-    throw new Error('Board data is read only! Trying to access read only data...')
-  }
-
-  decode(payload: Buffer) {
-    const reader = SmartBuffer.fromBuffer(payload)
-
-    const data: Board = {
-      mac: [
-        reader.readUInt8(),
-        reader.readUInt8(),
-        reader.readUInt8(),
-        reader.readUInt8(),
-        reader.readUInt8(),
-        reader.readUInt8(),
-      ],
-      ip: [
-        reader.readUInt8(),
-        reader.readUInt8(),
-        reader.readUInt8(),
-        reader.readUInt8()
-      ]
-    }
-
-    return data
-  }
-}
-
 export class StateCodec extends Codec<State> {
   filter(message: Message): boolean {
     return message.messageID === MSGID.STATE
@@ -79,6 +46,7 @@ export class StateCodec extends Codec<State> {
     const data: State = {
       robocar: reader.readUInt8(),
       imu: reader.readUInt8(),
+      tof_spot: reader.readUInt8(),
     }
 
     return data
@@ -122,14 +90,14 @@ export class SensorCodec extends Codec<Sensor> {
       pixel: []
     }
 
-    for (let y = 0; y < 25; y++) {
-      for (let x = 0; x < 25; x++) {
+    for (let y = 0; y < 1; y++) {
+      for (let x = 0; x < 1; x++) {
         tofCamera.pixel.push(reader.readUInt8())
       }
     }
 
     const tofSpot: TofSpot = {
-      distance: reader.readUInt16LE()
+      distance: reader.readUInt16LE(),
     }
 
     const sensor: Sensor = {
@@ -163,7 +131,7 @@ export class DataCodec extends Codec<Data> {
           z: reader.readFloatLE(),
         }
       },
-      distance_to_target: reader.readUInt16LE(),
+      distance_to_target: reader.readInt16LE(),
       position: {
         x: reader.readFloatLE(),
         y: reader.readFloatLE(),
