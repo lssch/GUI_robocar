@@ -10,9 +10,8 @@ import {useHardwareState} from "@electricui/components-core";
 
 
 const layoutDescription = `
-  Build Build
-  Esp Stm
-  Readme Readme
+  Build
+  Readme
 `
 
 const WebsocketConnected = () => {
@@ -39,108 +38,6 @@ export const InfoPage = (props: RouteComponentProps) => {
       <Composition areas={layoutDescription} gap={10} autoCols="1fr">
         {Areas => (
           <React.Fragment>
-            <Areas.Esp>
-              <Card>
-                <div style={{ textAlign: 'center'}}>
-                  <h2>ESP32 Device info</h2>
-                </div>
-
-                <Composition templateCols="1fr 1fr" gap={15}>
-                  <Box>
-                    <b>Processor</b>
-                  </Box>
-                  <Box>
-                    <p>ESP32-S3</p>
-                  </Box>
-                  <Box>
-                    <b>Frequency</b>
-                  </Box>
-                  <Box>
-                    <p>240 MHz</p>
-                  </Box>
-                  <Box>
-                    <b>Flash</b>
-                  </Box>
-                  <Box>
-                    <p>8 MB</p>
-                  </Box>
-                  <Box>
-                    <b>Ram</b>
-                  </Box>
-                  <Box>
-                    <p>512 kB</p>
-                  </Box>
-                  <Box>
-                    <b>Mac</b>
-                  </Box>
-                  <Box>
-                    <Printer accessor={state => state.board.mac[0]}/>
-                    :
-                    <Printer accessor={state => state.board.mac[1]}/>
-                    :
-                    <Printer accessor={state => state.board.mac[2]}/>
-                    :
-                    <Printer accessor={state => state.board.mac[3]}/>
-                    :
-                    <Printer accessor={state => state.board.mac[4]}/>
-                    :
-                    <Printer accessor={state => state.board.mac[5]}/>
-                  </Box>
-                  <Box>
-                    <b>Ip</b>
-                  </Box>
-                  <Box>
-                    <Printer accessor={state => state.board.ip[0]}/>
-                    .
-                    <Printer accessor={state => state.board.ip[1]}/>
-                    .
-                    <Printer accessor={state => state.board.ip[2]}/>
-                    .
-                    <Printer accessor={state => state.board.ip[3]}/>
-                  </Box>
-                  <Box>
-                    <b>Websocket</b>
-                  </Box>
-                  <Box>
-                    <WebsocketConnected/>
-                  </Box>
-                </Composition>
-              </Card>
-            </Areas.Esp>
-            <Areas.Stm>
-              <Card>
-                <div style={{ textAlign: 'center'}}>
-                  <h2>STM32 Device info</h2>
-                </div>
-
-                <Composition templateCols="1fr 1fr" gap={15}>
-                  <Box>
-                    <b>Processor</b>
-                  </Box>
-                  <Box>
-                    <p>STM32-F401RE / STM32-F446RE</p>
-                  </Box>
-                  <Box>
-                    <b>Frequency</b>
-                  </Box>
-                  <Box>
-                    <p>84 MHz / 180 MHz</p>
-                  </Box>
-                  <Box>
-                    <b>Flash</b>
-                  </Box>
-                  <Box>
-                    <p>512 kB / 512 kB (4 kB Backup)</p>
-                  </Box>
-                  <Box>
-                    <b>Ram</b>
-                  </Box>
-                  <Box>
-                    <p>96 kB / 128 kB</p>
-                  </Box>
-                </Composition>
-              </Card>
-            </Areas.Stm>
             <Areas.Build>
               <Card>
                 <div style={{ textAlign: 'center'}}>
@@ -164,7 +61,7 @@ export const InfoPage = (props: RouteComponentProps) => {
                     <b>Version</b>
                   </Box>
                   <Box>
-                    <p>0.0.0</p>
+                    <p>1.0.0</p>
                   </Box>
                   <Box>
                     <b>Author</b>
@@ -180,7 +77,20 @@ export const InfoPage = (props: RouteComponentProps) => {
                 <div style={{ textAlign: 'center'}}>
                   <h2>Readme</h2>
                 </div>
-                
+                <p>
+                  This is a third semester project at FHGR to develop a semi autonomos rc car with simple obstancle avoidance. The project consists of three main software components.
+                </p>
+                <ul>
+                  <li>
+                    <a href={"https://github.com/lssch/STM32_Robocar_FW"}>STM32 Firmware</a>
+                  </li>
+                  <li>
+                    <a href={"https://github.com/lssch/ESP32_Robocar_FW"}>ESP32 Firmware</a>
+                  </li>
+                  <li>
+                    <a href={"https://github.com/lssch/GUI_robocar"}>GUI</a>
+                  </li>
+                </ul>
               </Card>
             </Areas.Readme>
           </React.Fragment>
